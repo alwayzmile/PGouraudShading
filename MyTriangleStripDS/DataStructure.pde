@@ -84,9 +84,9 @@ class TriangleStrip
       p1 = new Point(round(v1.x), round(v1.y));
       p2 = new Point(round(v2.x), round(v2.y));
       p3 = new Point(round(v3.x), round(v3.y));
-      println(round(v1.x) + " " + round(v1.y));
-      println(round(v2.x) + " " + round(v2.y));
-      println(round(v3.x) + " " + round(v3.y));
+      //println(round(v1.x) + " " + round(v1.y));
+      //println(round(v2.x) + " " + round(v2.y));
+      //println(round(v3.x) + " " + round(v3.y));
       
       
       Polygon pol = new Polygon();
@@ -116,5 +116,26 @@ class TriangleStrip
     
     //println("NS: " + ns);
     //println("N : " + (n+1));
+  }
+}
+
+class VertexInt
+{
+  int x, y, z, w;
+  
+  VertexInt() 
+  { x = y = z = 0; w = 1; }
+  
+  VertexInt(int x, int y) 
+  { this.x = x; this.y = y; z = 0; w = 1; }
+  
+  VertexInt(int x, int y, int z) 
+  { this.x = x; this.y = y; this.z = z; w = 1; }
+  
+  VertexInt(int x, int y, int z, int w) 
+  { this.x = x; this.y = y; this.z = z; this.w = w; }
+  
+  String toString() {
+    return ( "(" + (x) + "," + (y) + "," + (z) + "," + (w) + ")" );
   }
 }
