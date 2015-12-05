@@ -1,6 +1,11 @@
 /**
  * todo:
  * -polygon filling
+ * Q chris
+ * -kalo float point?
+ * -pol.fills() garis tepi ketimpa?
+ * -nxt = cur.next; kadang null
+ * -setRect?
  */
 
 int Band_Power;  // 2^Band_Power = Total Points in a band.
@@ -39,8 +44,8 @@ void setup() {
   noFill();
   strokeWeight(0.005);
   
-  Band_Power = 5;  // 2^Band_Power = Total Points in a band.
-  Band_Points = 32; // 16 = 2^Band_Power
+  Band_Power = 6;  // 2^Band_Power = Total Points in a band.
+  Band_Points = 64; // 16 = 2^Band_Power
   Band_Mask = (Band_Points-2);
   Sections_In_Band = ((Band_Points/2)-1);
   Total_Points = (Sections_In_Band*Band_Points);
@@ -48,8 +53,7 @@ void setup() {
   Section_Arc = (6.28/Sections_In_Band);
   R = -10; // radius of 10
   
-  translate(width/2, height/2);
-  scale(10, 10);
+  //scale(10, 10);
   
   int i;
   float x_angle;
@@ -76,11 +80,10 @@ void setup() {
       R*sin(x_angle)*cos(y_angle));*/
       
     ts.addVertex(
-      R*sin(x_angle)*sin(y_angle),
-      R*cos(x_angle),
+      R*sin(x_angle)*sin(y_angle)*10+width/2,
+      R*cos(x_angle)*10+height/2,
       R*sin(x_angle)*cos(y_angle));
   }
-  
   ts.drawIt();
   
   /*
