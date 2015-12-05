@@ -13,8 +13,8 @@ void setup() {
   noFill();
   strokeWeight(0.005);
   
-  Band_Power = 5;  // 2^Band_Power = Total Points in a band.
-  Band_Points = 32; // 16 = 2^Band_Power
+  Band_Power = 6;  // 2^Band_Power = Total Points in a band.
+  Band_Points = 64; // 16 = 2^Band_Power
   Band_Mask = (Band_Points-2);
   Sections_In_Band = ((Band_Points/2)-1);
   Total_Points = (Sections_In_Band*Band_Points);

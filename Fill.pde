@@ -79,26 +79,22 @@ class AEL
     ElemSET cur = first;
     
     while (cur != null) {
-      cur.xyMin += intDiv(cur.dx, cur.dy);
+      cur.xyMin += (cur.dx / cur.dy);
       cur.carry += (cur.dx % cur.dy);
       
-      if (cur.dx < 0) //======================== why doing this
+      if (cur.dx < 0) { //======================== why doing this
         if (cur.carry <= -cur.dy) {
           cur.xyMin--;
           cur.carry += cur.dy;
         }
-      else
+      } else {
         if (cur.carry >= cur.dy) {
           cur.xyMin++;
           cur.carry -= cur.dy;
         }
+      }
         
       cur = cur.next;
     }
   }
-}
-
-int intDiv(int a, int b) {
-  a = a - (a % b);
-  return a / b;
 }

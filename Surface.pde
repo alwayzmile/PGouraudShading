@@ -76,7 +76,7 @@ class Surface
     for (int i = yMin; i <= yMax; i++) {
       ael.y = i;
       
-      if (buckets[i - yMin].first != null) {
+      if (buckets[i - yMin].first != null) {        
         ael.insertL(buckets[i - yMin].first, buckets[i - yMin].size);
         deleteReplaced();
         sortAEL();
@@ -84,7 +84,7 @@ class Surface
       
       deleteOverY();
       stroke(fill);
-      strokeWeight(0.3);
+      strokeWeight(1);
       ael.fill();
       ael.process();
     }

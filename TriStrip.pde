@@ -48,10 +48,10 @@ class TriangleStrip
       sf.fill = #ff0000;
       sf.fill();
       
-      stroke(0);
-      line(v1.x, v1.y, v2.x, v2.y);
-      line(v2.x, v2.y, v3.x, v3.y);
-      line(v3.x, v3.y, v1.x, v1.y);
+      //stroke(0);
+      //line(vi1.x, vi1.y, vi2.x, vi2.y);
+      //line(vi2.x, vi2.y, vi3.x, vi3.y);
+      //line(vi3.x, vi3.y, vi1.x, vi1.y);
     }
   }
 }
@@ -77,10 +77,9 @@ class Vertex
 class VertexInt
 {
   int x, y;
-  VertexInt next;
   
   VertexInt() 
-  { x = y = 0; next = null; }
+  { x = y = 0; }
   
   VertexInt(int x, int y)
   { this.x = x; this.y = y; }
