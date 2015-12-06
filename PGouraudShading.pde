@@ -7,14 +7,21 @@ int Total_Points;
 float Section_Arc;
 float R; // radius of 10
 
+Vector DOP = new Vector(0, 0, -1);
+Vertex lightPos = new Vertex(-10, -10, 10);
+color lightCol = #ff0000;
+float ka = 0.7,
+      kd = 1.1;
+TriangleStrip ts;
+
 void setup() {
-  size(640, 360);
+  size(640, 360, OPENGL);
   background(204);
   noFill();
   strokeWeight(0.005);
   
-  Band_Power = 6;  // 2^Band_Power = Total Points in a band.
-  Band_Points = 64; // 16 = 2^Band_Power
+  Band_Power = 5;  // 2^Band_Power = Total Points in a band.
+  Band_Points = 32; // 16 = 2^Band_Power
   Band_Mask = (Band_Points-2);
   Sections_In_Band = ((Band_Points/2)-1);
   Total_Points = (Sections_In_Band*Band_Points);
@@ -27,7 +34,7 @@ void setup() {
   int i;
   float x_angle;
   float y_angle;
-  TriangleStrip ts = new TriangleStrip();
+  ts = new TriangleStrip();
   for (i=0;i<Total_Points;i++)
   {  
     // using last bit to alternate,+band number (which band)
@@ -49,11 +56,27 @@ void setup() {
       R*sin(x_angle)*cos(y_angle));*/
       
     ts.addVertex(
-      R*sin(x_angle)*sin(y_angle)*10+width/2,
-      R*cos(x_angle)*10+height/2,
+      R*sin(x_angle)*sin(y_angle),
+      R*cos(x_angle),
       R*sin(x_angle)*cos(y_angle));
   }
-  ts.drawIt();
+  ts.draw();
 }
 
 void draw(){}
+
+void keyPressed() {
+  if (key == 'x' || key == 'X') {
+    ts.rotX(3);
+    background(204);
+    ts.draw();
+  } else if (key == 'y' || key == 'Y') {
+    ts.rotY(3);
+    background(204);
+    ts.draw();
+  } else if (key == 'z' || key == 'Z') {
+    ts.rotZ(3);
+    background(204);
+    ts.draw();
+  }
+}

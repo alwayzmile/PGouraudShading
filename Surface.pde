@@ -4,7 +4,7 @@ class Surface
   int xMin, xMax, yMin, yMax;
   color fill = color(0);
   Edge[] edges = new Edge[3];
-  BuckSET[] buckets = new BuckSET[height];
+  BuckSET[] buckets;
   AEL ael;
   
   Surface(VertexInt vi1, VertexInt vi2, VertexInt vi3)
@@ -25,8 +25,8 @@ class Surface
   
   void setBuckets() {
     // clear buckets
-    //buckets = new BuckSET[yMax - yMin + 1];
-    for (int i = 0; i < height; i++)
+    buckets = new BuckSET[yMax - yMin + 1];
+    for (int i = 0; i < (yMax - yMin + 1); i++)
       buckets[i] = new BuckSET();
     
     // insert edges to buckets
@@ -72,6 +72,13 @@ class Surface
   void fill() {
     setBuckets();
     ael = new AEL();
+    
+    // draw outline
+    stroke(fill);
+    strokeWeight(1);
+    line(vi1.x, vi1.y, vi2.x, vi2.y);
+    line(vi2.x, vi2.y, vi3.x, vi3.y);
+    line(vi3.x, vi3.y, vi1.x, vi1.y);
     
     for (int i = yMin; i <= yMax; i++) {
       ael.y = i;
