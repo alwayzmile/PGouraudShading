@@ -27,51 +27,36 @@ class TriangleStrip
              v3 = verts.get(idVert);
       float d;
       
-      if ((idVert+1) == verts.size())
+      if ((idVert+1) == verts.size() && 
+          triData.size() < verts.size()-2)
         triData.add(td);
         
-      //if (v1.x != v2.x && v2.x != v3.x && v3.x != v1.x ) {
+      if (!v1.equals(v2) && !v1.equals(v3) && !v2.equals(v3)) {
         if (idVert % 2 == 0)
-          td.N = (new Vector(v2.x-v1.x, v2.y-v1.y, v2.z-v1.z)).cross(new Vector(v3.x-v1.x, v3.y-v1.y, v3.z-v1.z));
+          td.N = (new Vector(v1, v2)).cross(new Vector(v1, v3));
         else
-          td.N = (new Vector(v3.x-v1.x, v3.y-v1.y, v3.z-v1.z)).cross(new Vector(v2.x-v1.x, v2.y-v1.y, v2.z-v1.z));
+          td.N = (new Vector(v1, v3)).cross(new Vector(v1, v2));
           
         d = td.N.dot(DOP);
         if (d < 0) {
           td.isDisplayed = true;
-          td.fill = flatShading(idVert-2, lightCol, ka, kd);  // (verts.size() - 2) == (triData.size());
-        }
-      //} // end if v1.x != v2.x ...
+          td.fill = flatShading(lightCol, ka, kd, (new Vector(v1, lightPos)).normalize(), td.N.normalize());
+          
+          /*
+          if ( xi == 0 ) {
+          //println(xi);
+          println(v1.toString());
+          println(v2.toString());
+          println(v3.toString());
+          println((red(td.fill)) + " " + (green(td.fill)) + " " + (blue(td.fill)) );
+          xi++;
+          }
+          */
+        } // end if d < 0
+      } // end if !v1.equals(v2) && ...
       
       triData.set(idVert-2, td);
     } // end if idVert >= 2 ...
-  }
-  
-  /**
-   * idTri is the index of the triangle which its data stored in triData
-   * this triangle is formed by vertices 
-   * verts.get(idTri-2), verts.get(idTri-1), verts.get(idTri)
-   *
-   * ka is the ambient coefficient
-   * kd is the diffuse coefficient
-   *
-   * note: (verts.size() - 2) == (triData.size());
-   */
-  private color flatShading(int idTri, color fill, float ka, float kd) {
-    if (triData.get(idTri).isDisplayed) {
-      Vertex vert = verts.get(idTri);
-      Vector N = triData.get(idTri).N.normalize();
-      Vector L = new Vector(lightPos);
-      L = L.sub(new Vector(vert)).normalize();
-      
-      int R = int(ka * red(fill)   + kd * red(fill)   * L.dot(N));
-      int G = int(ka * green(fill) + kd * green(fill) * L.dot(N));
-      int B = int(ka * blue(fill)  + kd * blue(fill)  * L.dot(N));
-      
-      return color(R, G, B);
-    } else {
-      return color(0);
-    }
   }
   
   void draw() {
@@ -101,6 +86,25 @@ class TriangleStrip
         sf = new Surface(vi1, vi2, vi3);
         sf.fill = triData.get(i-2).fill;
         sf.fill();
+        
+        /*
+        if (red(sf.fill) <= 0)
+          println("ada");
+        
+        strokeWeight(1);
+        stroke(0);
+        line(v1.x, v1.y, v2.x, v2.y);
+        line(v2.x, v2.y, v3.x, v3.y);
+        line(v3.x, v3.y, v1.x, v1.y);
+        
+        strokeWeight(5);
+        stroke(#ff0000);
+        point(v1.x+5, v1.y+5);
+        stroke(#00ff00);
+        point(v2.x+5, v2.y+5);
+        stroke(#0000ff);
+        point(v3.x+5, v3.y+5);
+        */
       }
     }
   }
@@ -163,6 +167,10 @@ class Vertex
   
   Vertex(float x, float y, float z, float w) 
   { this.x = x; this.y = y; this.z = z; this.w = w; }
+  
+  boolean equals(Vertex v) {
+    return (x == v.x && y == v.y && z == v.z);
+  }
   
   String toString() {
     return ( "(" + (x) + "," + (y) + "," + (z) + "," + (w) + ")" );
@@ -231,6 +239,9 @@ class Vector
   
   Vector(float xx, float yy, float zz) 
   { x = xx; y = yy; z = zz; }
+  
+  Vector(Vertex A, Vertex B) 
+  { x = B.x-A.x; y = B.y-A.y; z = B.z-A.z; }
   
   float dot(Vector vect) {
     return x*vect.x + y*vect.y + z*vect.z;
