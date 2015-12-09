@@ -83,13 +83,13 @@ class Polygon {
       
       // right end
       last = first;     // don't need last.next; and ... the same as first.next
-      println("first == null " + pt.toString());
+      //println("first == null " + pt.toString());
     } else {
       Point cur = first;
 
       while (cur.next != first && cur.y < pt.y) {
         cur = cur.next;
-        println("while = " + (cur.y >= pt.y) + "; " + pt.toString());
+        //println("while = " + (cur.y >= pt.y) + "; " + pt.toString());
       } // cur.next == first || cur.y >= pt.y
 
       if (cur.y > pt.y) {     // cur.y > pt.y; insert before cur
@@ -104,7 +104,9 @@ class Polygon {
         if (cur.next == pt) {
           first = pt;
           last = cur;
-          println("first " + first.toString());
+          //println("first " + first.toString());
+        } else if (cur == first) {
+          first = pt;
         }
       } else if (cur.y == pt.y) {  // sort x
         if (cur.x > pt.x) {   // insert before cur
@@ -112,63 +114,24 @@ class Polygon {
           pt.prev = cur.prev;
           pt.prev.next = pt;  // cur.prev.next = pt
           cur.prev = pt;
+          
+          if (cur.next == pt) {
+            first = pt;
+            last = cur;
+            //println("first " + first.toString());
+          } else if (cur == first) {
+            first = pt;
+          }
         } else {              // insert after cur
           pt.prev = cur;
           pt.next = cur.next;
           pt.next.prev = pt;  // cur.next.prev = pt
           cur.next = pt;
           
-          if (cur == last) {
+          if (pt.next == first) {
             last = pt;  
           }
         } 
-      } else { // cur.next == first
-        if (cur == first) {
-          if (first.y < pt.y) { // insert after first
-            // as after and before "first"; also be "last"
-            pt.next = first;
-            pt.prev = first;
-            last = pt;
-            
-            first.next = last;
-            first.prev = last;
-            println("insert after first " + pt.toString());
-          } else if (first.y > pt.y) { // insert as "first"
-            first.next = pt;
-            first.prev = pt;
-            last = first;
-            
-            pt.prev = last;
-            pt.next = last;
-            first = pt;
-            println("insert as first " + pt.toString());
-          } else { // first.y == pt.y
-            if (first.x < pt.x) { // insert as after and before "first"; also be "last"
-              pt.next = first;
-              pt.prev = first;
-              last = pt;
-              
-              first.next = last;
-              first.prev = last;
-            } else { // insert as "first"
-              first.next = pt;
-              first.prev = pt;
-              last = first;
-              
-              pt.prev = last;
-              pt.next = last;
-              first = pt;
-            } // end if first.x < pt.x else ...
-          } // end if first.y < pt.y else if ...
-        } else { // cur != first
-          // insert as "last"
-          pt.next = first;
-          pt.prev = cur;
-          last = pt;
-          cur.next = last;
-          first.prev = last;
-          println("test cur != first " + pt.toString());
-        } // end if cur == first else
       } // end if cur.y > pt.y else if ...
     } // end if first == null
   }
