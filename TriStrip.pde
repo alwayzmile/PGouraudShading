@@ -72,11 +72,11 @@ class TriangleStrip
         v3 = perspective(verts.get(i)  , 0, 0, 5);
         
         // scale and translate the vertices for displaying purpose
-        v1 = v1.scale(10, 10, 1)
+        v1 = v1.scale(100, 100, 1)
                .translate(width/2, height/2, 0);
-        v2 = v2.scale(10, 10, 1)
+        v2 = v2.scale(100, 100, 1)
                .translate(width/2, height/2, 0);
-        v3 = v3.scale(10, 10, 1)
+        v3 = v3.scale(100, 100, 1)
                .translate(width/2, height/2, 0);
         
         vi1 = new VertexInt(round(v1.x), round(v1.y));
@@ -173,7 +173,7 @@ class Vertex
   }
   
   String toString() {
-    return ( "(" + (x) + "," + (y) + "," + (z) + "," + (w) + ")" );
+    return ( "(" + (x) + " " + (y) + " " + (z) + " " + (w) + ")" );
   }
   
   Vertex rotX(float deg) {
@@ -226,7 +226,7 @@ class VertexInt
   { this.x = x; this.y = y; }
   
   String toString() {
-    return ( "(" + (x) + "," + (y) + ")" );
+    return ( "(" + (x) + " " + (y) + ")" );
   }
 }
 
@@ -267,6 +267,6 @@ class Vector
   }
   
   String toString() {
-    return ("(" + x + "," + y + "," + z + ")");
+    return ("(" + x + " " + y + " " + z + ")T");
   }
 }
