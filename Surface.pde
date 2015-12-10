@@ -75,7 +75,7 @@ class Surface
     
     // draw outline
     stroke(fill);
-    strokeWeight(1);
+    strokeWeight(2);
     line(vi1.x, vi1.y, vi2.x, vi2.y);
     line(vi2.x, vi2.y, vi3.x, vi3.y);
     line(vi3.x, vi3.y, vi1.x, vi1.y);
