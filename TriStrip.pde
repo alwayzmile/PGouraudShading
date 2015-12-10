@@ -1,3 +1,18 @@
+// class TriangleData
+// class TriangleStrip
+
+class TriangleData
+{
+  Vector N = null;
+  boolean isDisplayed = false;
+  color fill = color(0);
+  
+  TriangleData() {}
+  
+  TriangleData(Vector N, boolean isDisplayed, color fill)
+  { this.N = N; this.isDisplayed = isDisplayed; this.fill = fill; }
+}
+
 class TriangleStrip
 {
   ArrayList<Vertex> verts = new ArrayList<Vertex>();
@@ -61,9 +76,8 @@ class TriangleStrip
   
   void draw() {
     Vertex v1, v2, v3;
-    VertexInt vi1, vi2, vi3;
     Vector normal;
-    Surface sf;
+    Polygon pol;
         
     for ( int i = 2; i < verts.size(); i++ ) {      
       if (triData.get(i-2).isDisplayed) {                 // (verts.size() - 2) == (triData.size());
@@ -79,32 +93,9 @@ class TriangleStrip
         v3 = v3.scale(100, 100, 1)
                .translate(width/2, height/2, 0);
         
-        vi1 = new VertexInt(round(v1.x), round(v1.y));
-        vi2 = new VertexInt(round(v2.x), round(v2.y));
-        vi3 = new VertexInt(round(v3.x), round(v3.y));
-        
-        sf = new Surface(vi1, vi2, vi3);
-        sf.fill = triData.get(i-2).fill;
-        sf.fill();
-        
-        /*
-        if (red(sf.fill) <= 0)
-          println("ada");
-        
-        strokeWeight(1);
-        stroke(0);
-        line(v1.x, v1.y, v2.x, v2.y);
-        line(v2.x, v2.y, v3.x, v3.y);
-        line(v3.x, v3.y, v1.x, v1.y);
-        
-        strokeWeight(5);
-        stroke(#ff0000);
-        point(v1.x+5, v1.y+5);
-        stroke(#00ff00);
-        point(v2.x+5, v2.y+5);
-        stroke(#0000ff);
-        point(v3.x+5, v3.y+5);
-        */
+        pol = new Polygon(v1, v2, v3);
+        //pol.draw();
+        pol.fill(triData.get(i-2).fill);
       }
     }
   }
@@ -140,133 +131,5 @@ class TriangleStrip
     }
     
     draw();
-  }
-}
-
-class TriangleData
-{
-  Vector N = null;
-  boolean isDisplayed = false;
-  color fill = color(0);
-  
-  TriangleData() {}
-  
-  TriangleData(Vector N, boolean isDisplayed, color fill)
-  { this.N = N; this.isDisplayed = isDisplayed; this.fill = fill; }
-}
-
-class Vertex
-{
-  float x, y, z, w = 1;
-  
-  Vertex() 
-  { x = y = z = 0; }
-  
-  Vertex(float x, float y, float z) 
-  { this.x = x; this.y = y; this.z = z; }
-  
-  Vertex(float x, float y, float z, float w) 
-  { this.x = x; this.y = y; this.z = z; this.w = w; }
-  
-  boolean equals(Vertex v) {
-    return (x == v.x && y == v.y && z == v.z);
-  }
-  
-  String toString() {
-    return ( "(" + (x) + " " + (y) + " " + (z) + " " + (w) + ")" );
-  }
-  
-  Vertex rotX(float deg) {
-    float angle = radians(deg);
-    float yrot, zrot;
-    
-    yrot = y*cos(angle) + z*-sin(angle);
-    zrot = y*sin(angle) + z*cos(angle);
-    
-    return new Vertex(x, yrot, zrot);
-  }
-  
-  Vertex rotY(float deg) {
-    float angle = radians(deg);
-    float xrot, zrot;
-    
-    xrot = x*cos(angle) + z*sin(angle);
-    zrot = x*-sin(angle) + z*cos(angle);
-    
-    return new Vertex(xrot, y, zrot);
-  }
-  
-  Vertex rotZ(float deg) {
-    float angle = radians(deg);
-    float xrot, yrot;
-    
-    xrot = x*cos(angle) + y*-sin(angle);
-    yrot = x*sin(angle) + y*cos(angle);
-    
-    return new Vertex(xrot, yrot, z);
-  }
-  
-  Vertex scale(float sx, float sy, float sz) {
-    return new Vertex(x*sx, y*sy, z*sz);
-  }
-  
-  Vertex translate(float dx, float dy, float dz) {
-    return new Vertex(x+dx, y+dy, z+dz);
-  }
-}
-
-class VertexInt
-{
-  int x, y;
-  
-  VertexInt() 
-  { x = y = 0; }
-  
-  VertexInt(int x, int y)
-  { this.x = x; this.y = y; }
-  
-  String toString() {
-    return ( "(" + (x) + " " + (y) + ")" );
-  }
-}
-
-class Vector
-{
-  float x, y, z;
-  
-  Vector(Vertex v)
-  { x = v.x; y = v.y; z = v.z; }
-  
-  Vector(float xx, float yy, float zz) 
-  { x = xx; y = yy; z = zz; }
-  
-  Vector(Vertex A, Vertex B) 
-  { x = B.x-A.x; y = B.y-A.y; z = B.z-A.z; }
-  
-  float dot(Vector vect) {
-    return x*vect.x + y*vect.y + z*vect.z;
-  }
-  
-  Vector cross(Vector vect) {
-    return new Vector(y*vect.z - z*vect.y,
-                        z*vect.x - x*vect.z,
-                        x*vect.y - y*vect.x);
-  }
-  
-  float length() {
-    return sqrt(dot(this));
-  }
-  
-  Vector normalize() {
-    float len = length();
-    return new Vector(x/len, y/len, z/len);
-  }
-  
-  Vector sub(Vector v) {
-    return new Vector(x - v.x, y - v.y, z - v.z);
-  }
-  
-  String toString() {
-    return ("(" + x + " " + y + " " + z + ")T");
   }
 }
