@@ -20,8 +20,8 @@ void setup() {
   noFill();
   strokeWeight(0.005);
   
-  Band_Power = 6;  // 2^Band_Power = Total Points in a band.
-  Band_Points = 64; // 2^Band_Power
+  Band_Power = 5;  // 2^Band_Power = Total Points in a band.
+  Band_Points = 32; // 2^Band_Power
   Band_Mask = (Band_Points-2);
   Sections_In_Band = ((Band_Points/2)-1);
   Total_Points = (Sections_In_Band*Band_Points);
@@ -60,25 +60,25 @@ void setup() {
       R*cos(x_angle),
       R*sin(x_angle)*cos(y_angle));
   }
-  ts.draw();
-  
-  String a = "test";
-  //println(a.equals("test"));
+  //ts.draw();
   
   Polygon testPol = new Polygon();
+  testPol.addF(50, 130.3, 50);
+  testPol.addF(90, 100.5, 50);
+  testPol.addF(90, 70.2, 50);
+  testPol.addF(50, 50.7, 50);
+  testPol.addF(10, 80.6, 50);
   /*
-  testPol.addF(-5, 3, 0);
-  testPol.addF(-2, 3, 0);
-  testPol.addF(-1, 3, 0);
-  testPol.addF(0, -3, 0);
-  testPol.addF(0, -5, 0);
-  */
   testPol.addSortedY(0, 8, 0);
   testPol.addSortedY(0, 0, 0);
   testPol.addSortedY(4, 5, 0);
   testPol.addSortedY(4, 2, 0);
   testPol.addSortedY(-5, 3, 0);
-  print(testPol.toString());
+  */
+  //print(testPol.toString());
+  println();
+  testPol.draw();
+  testPol.fill(#ff0000);
 }
 
 void draw(){}

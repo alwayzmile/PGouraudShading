@@ -1,3 +1,5 @@
+// color flatShading()
+
 /**
  * ka is the ambient coefficient
  * kd is the diffuse coefficient
