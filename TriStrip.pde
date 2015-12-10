@@ -1,17 +1,5 @@
-// class TriangleData
 // class TriangleStrip
-
-class TriangleData
-{
-  Vector N = null;
-  boolean isDisplayed = false;
-  color fill = color(0);
-  
-  TriangleData() {}
-  
-  TriangleData(Vector N, boolean isDisplayed, color fill)
-  { this.N = N; this.isDisplayed = isDisplayed; this.fill = fill; }
-}
+// class TriangleData
 
 class TriangleStrip
 {
@@ -76,8 +64,9 @@ class TriangleStrip
   
   void draw() {
     Vertex v1, v2, v3;
+    VertexInt vi1, vi2, vi3;
     Vector normal;
-    Polygon pol;
+    Surface sf;
         
     for ( int i = 2; i < verts.size(); i++ ) {      
       if (triData.get(i-2).isDisplayed) {                 // (verts.size() - 2) == (triData.size());
@@ -93,15 +82,32 @@ class TriangleStrip
         v3 = v3.scale(100, 100, 1)
                .translate(width/2, height/2, 0);
         
-        /*
-        println(v1.toString());
-        println(v2.toString());
-        println(v3.toString());
-        */
+        vi1 = new VertexInt(round(v1.x), round(v1.y));
+        vi2 = new VertexInt(round(v2.x), round(v2.y));
+        vi3 = new VertexInt(round(v3.x), round(v3.y));
         
-        pol = new Polygon(v1, v2, v3);
-        //pol.draw();
-        pol.fill(triData.get(i-2).fill);
+        sf = new Surface(vi1, vi2, vi3);
+        sf.fill = triData.get(i-2).fill;
+        sf.fill();
+        
+        /*
+        if (red(sf.fill) <= 0)
+          println("ada");
+        
+        strokeWeight(1);
+        stroke(0);
+        line(v1.x, v1.y, v2.x, v2.y);
+        line(v2.x, v2.y, v3.x, v3.y);
+        line(v3.x, v3.y, v1.x, v1.y);
+        
+        strokeWeight(5);
+        stroke(#ff0000);
+        point(v1.x+5, v1.y+5);
+        stroke(#00ff00);
+        point(v2.x+5, v2.y+5);
+        stroke(#0000ff);
+        point(v3.x+5, v3.y+5);
+        */
       }
     }
   }
@@ -138,4 +144,16 @@ class TriangleStrip
     
     draw();
   }
+}
+
+class TriangleData
+{
+  Vector N = null;
+  boolean isDisplayed = false;
+  color fill = color(0);
+  
+  TriangleData() {}
+  
+  TriangleData(Vector N, boolean isDisplayed, color fill)
+  { this.N = N; this.isDisplayed = isDisplayed; this.fill = fill; }
 }

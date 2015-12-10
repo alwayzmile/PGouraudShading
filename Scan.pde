@@ -1,35 +1,13 @@
-// ArrayList<Trapezoid> TrapezoidList
-// class Point
-// class Endpoint
-// class Trapezoid
-// class Polygon
-
 ArrayList<Trapezoid> TrapezoidList = new ArrayList<Trapezoid>();
 
-class Point 
-{
-  float x = 0, 
-        y = 0, 
-        z = 0;
-  Point next = null,    // next and prev as the order in the list
-        prev = null;
-  Point ptNext = null,  // next and prev as two edges
-        ptPrev = null;
-  boolean isPeak = false;
+class Trapezoid {
+  Endpoint ep1, ep2;
 
-  Point(float x, float y, float z) 
-  { this.x = x; this.y = y; this.z = z; }
-
-  Point(Point p) 
-  { this.x = p.x; this.y = p.y; this.z = p.z; }
-
-  String toString() {
-    return ( "(" + (x) + " " + (y) + " " + (z) + ")" );
-  }
+  Trapezoid(Endpoint ep1, Endpoint ep2) 
+  { this.ep1 = ep1; this.ep2 = ep2; }
 }
 
-class Endpoint 
-{
+class Endpoint {
   float x, y, z, yEnd, xyEnd;
   float xInc = 0, 
         zInc = 0;
@@ -52,28 +30,12 @@ class Endpoint
   }
 }
 
-class Trapezoid 
-{
-  Endpoint ep1, ep2;
-
-  Trapezoid(Endpoint ep1, Endpoint ep2) 
-  { this.ep1 = ep1; this.ep2 = ep2; }
-}
-
-class Polygon 
-{
+class Polygon {
   Point first = null,
         last = null;
 
   Polygon() {}
 
-  Polygon(Vertex v1, Vertex v2, Vertex v3) 
-  {
-    addF(v1.x, v1.y, v1.z);
-    addF(v2.x, v2.y, v2.z);
-    addF(v3.x, v3.y, v3.z);
-  }
-  
   void addF(float x, float y, float z) {
     addF(new Point(x, y, z));
   }
@@ -395,37 +357,33 @@ class Polygon
         p2end = p2max;
       else if (p2end.y < p2min.y)
         p2end = p2min;
-      
-      /*
+        
       println("p1start fin: " + p1start.toString());
       println("p2start fin: " + p2start.toString());
       println("p1end fin  : " + p1end.toString());
       println("p2end fin  : " + p2end.toString());
       println();
-      */
       
-      if (abs(p1start.y - p1end.y) > 1 && abs(p2start.y - p2end.y) > 1) {      
-        ep1 = new Endpoint(p1start);
-        ep1.xInc = -((p1start.x-p1end.x) / (p1start.y-p1end.y));
-        ep1.yEnd = p1end.y;
-        ep1.xyEnd = p1end.x;
-        
-        ep2 = new Endpoint(p2start);
-        ep2.xInc = -(p2start.x-p2end.x) / (p2start.y-p2end.y);
-        ep2.yEnd = p2end.y;
-        ep2.xyEnd = p2end.x;
-        
-        tmpT = new Trapezoid(ep1, ep2);
-        TrapezoidList.add(tmpT);
-      }
+      ep1 = new Endpoint(p1start);
+      ep1.xInc = -((p1start.x-p1end.x) / (p1start.y-p1end.y));
+      ep1.yEnd = p1end.y;
+      ep1.xyEnd = p1end.x;
+      
+      ep2 = new Endpoint(p2start);
+      ep2.xInc = -(p2start.x-p2end.x) / (p2start.y-p2end.y);
+      ep2.yEnd = p2end.y;
+      ep2.xyEnd = p2end.x;
+      
+      tmpT = new Trapezoid(ep1, ep2);
+      TrapezoidList.add(tmpT);
       
       cur = cur.next;
     } while (cur.next != teP.first);
     
-    //println("TrapezoidList size: " + TrapezoidList.size());
+    println("TrapezoidList size: " + TrapezoidList.size());
   }
   
-  void fill(color col) { 
+  void fill(color col) {    
     Trapezoid T;
     Endpoint ep1, ep2;
     int tmpi;
@@ -440,22 +398,10 @@ class Polygon
       ep1 = T.ep1;
       ep2 = T.ep2;
       
-      /*
-      //if (abs(ep1.y - ep1.yEnd) < 1 || abs(ep2.y - ep2.yEnd) < 1) {
-        println();
-        println(ep1.toString());
-        println();
-        println(ep2.toString());
-        println("==========================================");
-      //}
-      */
-      
-      /*
       println();
       println(ep1.toString());
       println();
       println(ep2.toString());
-      */
       
       /*
       stroke(#ff0000);
@@ -480,25 +426,16 @@ class Polygon
       }
       */
       
-      tmpf = -(ep1.y - floor(ep1.y)) * (ep1.x - ep1.xyEnd) / (ep1.y - ep1.yEnd);
-      pt1 = new Point(ep1.x+tmpf, floor(ep1.y), 0);
-      tmpf = -(ep2.y - floor(ep2.y)) * (ep2.x - ep2.xyEnd) / (ep2.y - ep2.yEnd);
-      pt2 = new Point(ep2.x+tmpf, floor(ep2.y), 0);
-      //pt1 = new Point(ep1.x, ep1.y, 0);
-      //pt2 = new Point(ep2.x, ep2.y, 0);
-      
-      //if (round(ep2.y) == round(ep2.yEnd))
-      //  println("same");
-      
-      stroke(col);
+      stroke(#ff0000);
       strokeWeight(1);
+      pt1 = new Point(ep1.x, ep1.y, 0);
+      pt2 = new Point(ep2.x, ep2.y, 0);
       for (int i = round(ep2.y); i >= round(ep2.yEnd); i-- ) {
-        line(floor(pt1.x), pt1.y, floor(pt2.x), pt2.y);
+        line(pt1.x, pt1.y, pt2.x, pt2.y);
         
         pt1 = new Point(pt1.x + ep1.xInc, pt1.y - 1, 0);
         pt2 = new Point(pt2.x + ep2.xInc, pt2.y - 1, 0);
       }
-      
       
       /*
       //-----------------------------------------------------------------------
@@ -539,7 +476,7 @@ class Polygon
   void draw() {
     Point cur = first;
     
-    strokeWeight(3);
+    strokeWeight(1);
     stroke(0);
     if (cur != null) {
       while (cur.next != first) {
@@ -578,5 +515,51 @@ class Polygon
     }
     
     return points;
+  }
+}
+
+class Line {
+  Point p1, p2;
+
+  Line(Point p1, Point p2)
+  { this.p1 = p1; this.p2 = p2; }
+}
+
+class Point {
+  float x = 0, 
+        y = 0, 
+        z = 0;
+  Point next = null,    // next and prev as the order in the list
+        prev = null;
+  Point ptNext = null,  // next and prev as two edges
+        ptPrev = null;
+  boolean isPeak = false;
+
+  Point(float x, float y, float z) 
+  { this.x = x; this.y = y; this.z = z; }
+
+  Point(Point p) 
+  { this.x = p.x; this.y = p.y; this.z = p.z; }
+
+  String toString() {
+    return ( "(" + (x) + " " + (y) + " " + (z) + ")" );
+  }
+}
+
+class Point2D {
+  float x = 0, 
+        y = 0;
+
+  Point2D(float x, float y) 
+  { this.x = x; this.y = y; }
+
+  Point2D(Point p) 
+  { this.x = p.x; this.y = p.y; }
+  
+  Point2D(Point2D p) 
+  { this.x = p.x; this.y = p.y; }
+
+  String toString() {
+    return ( "(" + (x) + " " + (y) + ")" );
   }
 }

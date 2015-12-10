@@ -63,6 +63,21 @@ class Vertex
   }
 }
 
+class VertexInt
+{
+  int x, y;
+  
+  VertexInt() 
+  { x = y = 0; }
+  
+  VertexInt(int x, int y)
+  { this.x = x; this.y = y; }
+  
+  String toString() {
+    return ( "(" + (x) + " " + (y) + ")" );
+  }
+}
+
 class Vector
 {
   float x, y, z;
