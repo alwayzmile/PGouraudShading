@@ -404,18 +404,20 @@ class Polygon
       println();
       */
       
-      ep1 = new Endpoint(p1start);
-      ep1.xInc = -((p1start.x-p1end.x) / (p1start.y-p1end.y));
-      ep1.yEnd = p1end.y;
-      ep1.xyEnd = p1end.x;
-      
-      ep2 = new Endpoint(p2start);
-      ep2.xInc = -(p2start.x-p2end.x) / (p2start.y-p2end.y);
-      ep2.yEnd = p2end.y;
-      ep2.xyEnd = p2end.x;
-      
-      tmpT = new Trapezoid(ep1, ep2);
-      TrapezoidList.add(tmpT);
+      if (abs(p1start.y - p1end.y) > 1 && abs(p2start.y - p2end.y) > 1) {      
+        ep1 = new Endpoint(p1start);
+        ep1.xInc = -((p1start.x-p1end.x) / (p1start.y-p1end.y));
+        ep1.yEnd = p1end.y;
+        ep1.xyEnd = p1end.x;
+        
+        ep2 = new Endpoint(p2start);
+        ep2.xInc = -(p2start.x-p2end.x) / (p2start.y-p2end.y);
+        ep2.yEnd = p2end.y;
+        ep2.xyEnd = p2end.x;
+        
+        tmpT = new Trapezoid(ep1, ep2);
+        TrapezoidList.add(tmpT);
+      }
       
       cur = cur.next;
     } while (cur.next != teP.first);
@@ -438,6 +440,7 @@ class Polygon
       ep1 = T.ep1;
       ep2 = T.ep2;
       
+      /*
       //if (abs(ep1.y - ep1.yEnd) < 1 || abs(ep2.y - ep2.yEnd) < 1) {
         println();
         println(ep1.toString());
@@ -445,6 +448,7 @@ class Polygon
         println(ep2.toString());
         println("==========================================");
       //}
+      */
       
       /*
       println();
@@ -476,16 +480,20 @@ class Polygon
       }
       */
       
-      stroke(col);
-      strokeWeight(1);
-      pt1 = new Point(ep1.x, ep1.y, 0);
-      pt2 = new Point(ep2.x, ep2.y, 0);
+      tmpf = -(ep1.y - floor(ep1.y)) * (ep1.x - ep1.xyEnd) / (ep1.y - ep1.yEnd);
+      pt1 = new Point(ep1.x+tmpf, floor(ep1.y), 0);
+      tmpf = -(ep2.y - floor(ep2.y)) * (ep2.x - ep2.xyEnd) / (ep2.y - ep2.yEnd);
+      pt2 = new Point(ep2.x+tmpf, floor(ep2.y), 0);
+      //pt1 = new Point(ep1.x, ep1.y, 0);
+      //pt2 = new Point(ep2.x, ep2.y, 0);
       
       //if (round(ep2.y) == round(ep2.yEnd))
       //  println("same");
       
+      stroke(col);
+      strokeWeight(1);
       for (int i = round(ep2.y); i >= round(ep2.yEnd); i-- ) {
-        line(pt1.x, pt1.y, pt2.x, pt2.y);
+        line(floor(pt1.x), pt1.y, floor(pt2.x), pt2.y);
         
         pt1 = new Point(pt1.x + ep1.xInc, pt1.y - 1, 0);
         pt2 = new Point(pt2.x + ep2.xInc, pt2.y - 1, 0);
@@ -531,7 +539,7 @@ class Polygon
   void draw() {
     Point cur = first;
     
-    strokeWeight(1);
+    strokeWeight(3);
     stroke(0);
     if (cur != null) {
       while (cur.next != first) {

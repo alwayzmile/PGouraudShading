@@ -93,6 +93,12 @@ class TriangleStrip
         v3 = v3.scale(100, 100, 1)
                .translate(width/2, height/2, 0);
         
+        /*
+        println(v1.toString());
+        println(v2.toString());
+        println(v3.toString());
+        */
+        
         pol = new Polygon(v1, v2, v3);
         //pol.draw();
         pol.fill(triData.get(i-2).fill);
