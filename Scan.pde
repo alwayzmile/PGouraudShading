@@ -15,6 +15,7 @@ class Point
         prev = null;
   Point ptNext = null,  // next and prev as two edges
         ptPrev = null;
+  color fill;
   boolean isPeak = false;
 
   Point(float x, float y, float z) 
@@ -22,6 +23,27 @@ class Point
 
   Point(Point p) 
   { this.x = p.x; this.y = p.y; this.z = p.z; }
+  
+  Point(Vertex v)
+  { this.x = v.x; this.y = v.y; this.z = v.z; this.fill = v.fill; }
+  
+  Point copy() {
+    Point tmp = new Point(this);
+    
+    tmp.next = next;
+    tmp.prev = prev;
+    tmp.ptNext = ptNext;
+    tmp.ptPrev = ptPrev;
+    tmp.fill = fill;
+    tmp.isPeak = isPeak;
+
+    return tmp;    
+  }
+  
+  void roundXY() {
+    x = round(x);
+    y = round(y);
+  }
 
   String toString() {
     return ( "(" + (x) + " " + (y) + " " + (z) + ")" );
@@ -33,6 +55,7 @@ class Endpoint
   float x, y, z, yEnd, xyEnd;
   float xInc = 0, 
         zInc = 0;
+  color fillYMin, fillYMax;
   
   Endpoint(float x, float y, float z)
   { this.x = x; this.y = y; this.z = z; }
@@ -74,10 +97,19 @@ class Polygon
     addF(v2.x, v2.y, v2.z);
     addF(v3.x, v3.y, v3.z);
     */
+    Point p1 = new Point(v1),
+          p2 = new Point(v2),
+          p3 = new Point(v3);
+          
+    p1.roundXY();
+    p2.roundXY();
+    p3.roundXY();
     
-    addF(round(v1.x), round(v1.y), v1.z);
-    addF(round(v2.x), round(v2.y), v2.z);
-    addF(round(v3.x), round(v3.y), v3.z);
+    addF(p1);
+    addF(p2);
+    addF(p3);
+    
+    //println(p1.fill);
   }
   
   void addF(float x, float y, float z) {
@@ -130,6 +162,7 @@ class Polygon
     pt.ptNext = p.ptNext;
     pt.ptPrev = p.ptPrev;
     pt.isPeak = p.isPeak;
+    pt.fill = p.fill;
     
     if (first == null) {
       /* 
@@ -344,7 +377,7 @@ class Polygon
       println("p1end: " + p1end.toString());
       println("p2end: " + p2end.toString());
       */
-      
+          
       if (p1start.y > p1end.y) {
         p1max = p1start;
         p1min = p1end;
@@ -381,26 +414,38 @@ class Polygon
       */
       
       //-----------------------------------------
-      if (p1start.y > p1max.y)
+      if (p1start.y > p1max.y) {
         p1start = p1max;
-      else if (p1start.y < p1min.y)
+      } else if (p1start.y < p1min.y) {
         p1start = p1min;
+      } else {
+        p1start.fill = interpolateIalongY(p1start.y, p1max.y, p1min.y, p1max.fill, p1min.fill);
+      }
         
-      if (p1end.y > p1max.y)
+      if (p1end.y > p1max.y) {
         p1end = p1max;
-      else if (p1end.y < p1min.y)
+      } else if (p1end.y < p1min.y) {
         p1end = p1min;
+      } else {
+        p1end.fill = interpolateIalongY(p1end.y, p1max.y, p1min.y, p1max.fill, p1min.fill);
+      }
       
       //-----------------------------------------
-      if (p2start.y > p2max.y)
+      if (p2start.y > p2max.y) {
         p2start = p2max;
-      else if (p2start.y < p2min.y)
+      } else if (p2start.y < p2min.y) {
         p2start = p2min;
+      } else {
+        p2start.fill = interpolateIalongY(p2start.y, p2max.y, p2min.y, p2max.fill, p2min.fill);
+      }
         
-      if (p2end.y > p2max.y)
+      if (p2end.y > p2max.y) {
         p2end = p2max;
-      else if (p2end.y < p2min.y)
+      } else if (p2end.y < p2min.y) {
         p2end = p2min;
+      } else {
+        p2end.fill = interpolateIalongY(p2end.y, p2max.y, p2min.y, p2max.fill, p2min.fill);
+      }
       
       /*
       println("p1start fin: " + p1start.toString());
@@ -414,11 +459,15 @@ class Polygon
       ep1.xInc = -((p1start.x-p1end.x) / (p1start.y-p1end.y));
       ep1.yEnd = p1end.y;
       ep1.xyEnd = p1end.x;
+      ep1.fillYMax = p1start.fill;
+      ep1.fillYMin = p1end.fill;
       
       ep2 = new Endpoint(p2start);
       ep2.xInc = -(p2start.x-p2end.x) / (p2start.y-p2end.y);
       ep2.yEnd = p2end.y;
       ep2.xyEnd = p2end.x;
+      ep2.fillYMax = p2start.fill;
+      ep2.fillYMin = p2end.fill;
       
       tmpT = new Trapezoid(ep1, ep2);
       TrapezoidList.add(tmpT);
@@ -429,12 +478,21 @@ class Polygon
     //println("TrapezoidList size: " + TrapezoidList.size());
   }
   
+  void fill() {
+    this.fill(0, false);
+  }
+  
   void fill(color col) {
+    this.fill(col, true);
+  }
+  
+  void fill(color col, boolean isFlat) {
     Trapezoid T;
     Endpoint ep1, ep2;
     int tmpi;
     float tmpf;
     Point pt1, pt2;
+    color coly1, coly2;
     
     TrapezoidList.clear();
     this.toTrapezoidList();
@@ -490,17 +548,63 @@ class Polygon
       //pt2 = new Point(ep2.x+tmpf, floor(ep2.y), 0);
       pt1 = new Point(ep1.x, ep1.y, 0);
       pt2 = new Point(ep2.x, ep2.y, 0);
+      coly1 = ep1.fillYMax;
+      coly2 = ep2.fillYMax;
       
       //if (round(ep2.y) == round(ep2.yEnd))
       //  println("same");
       
-      stroke(col);
-      strokeWeight(1);
-      for (int i = round(ep2.y); i >= round(ep2.yEnd); i-- ) {
-        line(floor(pt1.x), pt1.y, floor(pt2.x), pt2.y);
+      if (isFlat) {
+        stroke(col);
+        strokeWeight(1);
         
-        pt1 = new Point(pt1.x + ep1.xInc, pt1.y - 1, 0);
-        pt2 = new Point(pt2.x + ep2.xInc, pt2.y - 1, 0);
+        float i = ep2.y;
+        while (i >= ep2.yEnd) {
+          line(pt1.x, pt1.y, pt2.x, pt2.y);
+          println(pt1.x + " " + pt2.x);
+          
+          pt1 = new Point(pt1.x + ep1.xInc, pt1.y - 1, 0);
+          pt2 = new Point(pt2.x + ep2.xInc, pt2.y - 1, 0);
+          
+          i--;
+        }
+      } else { // !isFlat
+        strokeWeight(2);
+        
+        float i = round(ep2.y);
+        while (i >= ep2.yEnd) {
+          if (pt1.x != Float.POSITIVE_INFINITY && pt2.x != Float.POSITIVE_INFINITY &&
+              pt1.x != Float.NEGATIVE_INFINITY && pt2.x != Float.NEGATIVE_INFINITY) {
+            if (pt1.x <= pt2.x) {
+              float j = pt1.x;
+              while (j <= pt2.x) {
+                col = interpolateIalongX(j, pt1.x, pt2.x, coly1, coly2);
+                stroke(col);
+                point(j, pt1.y);
+                j++;
+              }
+            } else {
+              float j = pt1.x;
+              while (j > pt2.x) {
+                col = interpolateIalongX(j, pt2.x, pt1.x, coly2, coly1);
+                stroke(col);
+                point(j, pt1.y);
+                j--;
+              }
+            }
+          }
+          //strokeWeight(20);
+          //stroke(coly2);
+          //point(pt1.x, pt1.y);
+          
+          pt1 = new Point(pt1.x + ep1.xInc, pt1.y - 1, 0);
+          pt2 = new Point(pt2.x + ep2.xInc, pt2.y - 1, 0);
+          
+          coly1 = interpolateIalongY(pt1.y, ep1.y, ep1.yEnd, ep1.fillYMax, ep1.fillYMin);
+          coly2 = interpolateIalongY(pt2.y, ep2.y, ep2.yEnd, ep2.fillYMax, ep2.fillYMin);
+          
+          i--;
+        }
       }
       
       /*
@@ -539,19 +643,65 @@ class Polygon
     }
   }
   
+  void draw() {
+    this.draw(0, false);
+  }
+  
   void draw(color col) {
-    Point cur = first;
-    
-    strokeWeight(2);
-    stroke(col);
-    if (cur != null) {
-      while (cur.next != first) {
-        line(cur.x, cur.y, cur.next.x, cur.next.y);
-        cur = cur.next;
-      }
+    this.draw(col, true);
+  }
+  
+  void draw(color col, boolean isFlat) {
+    if (isFlat) {
+      Point cur = first;
       
-      line(cur.x, cur.y, cur.next.x, cur.next.y);
-    }
+      strokeWeight(2);
+      stroke(col);
+      if (cur != null) {
+        while (cur.next != first) {
+          line(cur.x, cur.y, cur.next.x, cur.next.y);
+          cur = cur.next;
+        }
+        
+        line(cur.x, cur.y, cur.next.x, cur.next.y);
+      }
+    } else {
+      Trapezoid T;
+      Endpoint ep1, ep2;
+      Point pt1, pt2;
+      color coly1, coly2;
+      
+      TrapezoidList.clear();
+      this.toTrapezoidList();
+      
+      for (int ti = 0; ti < TrapezoidList.size(); ti++) {
+        T = TrapezoidList.get(ti);
+        ep1 = T.ep1;
+        ep2 = T.ep2;
+        pt1 = new Point(ep1.x, ep1.y, 0);
+        pt2 = new Point(ep2.x, ep2.y, 0);
+        coly1 = ep1.fillYMax;
+        coly2 = ep2.fillYMax;
+        
+        strokeWeight(1);
+        float i = ep2.y;
+        while (i >= ep2.yEnd) {
+          stroke(coly1);
+          point(pt1.x, pt1.y);
+          
+          stroke(coly2);
+          point(pt2.x, pt2.y);
+          
+          pt1 = new Point(pt1.x + ep1.xInc, pt1.y - 1, 0);
+          pt2 = new Point(pt2.x + ep2.xInc, pt2.y - 1, 0);
+          
+          coly1 = interpolateIalongY(pt1.y, ep1.y, ep1.yEnd, ep1.fillYMax, ep1.fillYMin);
+          coly2 = interpolateIalongY(pt2.y, ep2.y, ep2.yEnd, ep2.fillYMax, ep2.fillYMin);
+          
+          i--;
+        } // end for i = ...
+      } // end for ti = 0
+    } // end if isFlat
   }
   
   String toString() {

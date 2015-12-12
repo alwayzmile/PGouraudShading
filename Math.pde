@@ -6,11 +6,12 @@
 class Vertex
 {
   float x, y, z, w = 1;
+  color fill;
   
-  Vertex() 
+  Vertex()
   { x = y = z = 0; }
   
-  Vertex(float x, float y, float z) 
+  Vertex(float x, float y, float z)
   { this.x = x; this.y = y; this.z = z; }
   
   Vertex(float x, float y, float z, float w) 

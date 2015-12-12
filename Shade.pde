@@ -62,3 +62,31 @@ color specular(color light, float ks, Vector V, Vector R, int n) {
   
   return color(Rspec, Gspec, Bspec);
 }
+
+// y1 value is higher than y2
+color interpolateIalongY(float ys, float y1, float y2, color i1, color i2) {
+  // Ia = (Ys - Y2) / (Y1 - Y2) * I1 + (Y1 - Ys) / (Y1 - Y2) * I2
+  if (y1 == y2) {
+    return i1;
+  } else {
+    float R = (ys - y2) / (y1 - y2) * red(i1) + (y1 - ys) / (y1 - y2) * red(i2);
+    float G = (ys - y2) / (y1 - y2) * green(i1) + (y1 - ys) / (y1 - y2) * green(i2);
+    float B = (ys - y2) / (y1 - y2) * blue(i1) + (y1 - ys) / (y1 - y2) * blue(i2);
+    
+    return color(R, G, B);
+  }
+}
+
+// yb value is higher than ya
+color interpolateIalongX(float xp, float xa, float xb, color ia, color ib) {
+  // Ip = (Xb - Xp) / (Xb - Xa) * Ia + (Xp - Xa) / (Xb - Xa) * Ib
+  if (xa == xb) {
+    return ia;
+  } else {
+    float R = (xb - xp) / (xb - xa) * red(ia) + (xp - xa) / (xb - xa) * red(ib);
+    float G = (xb - xp) / (xb - xa) * green(ia) + (xp - xa) / (xb - xa) * green(ib);
+    float B = (xb - xp) / (xb - xa) * blue(ia) + (xp - xa) / (xb - xa) * blue(ib);
+    
+    return color(R, G, B);
+  }
+}

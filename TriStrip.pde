@@ -56,9 +56,9 @@ class TriangleStrip
         d = td.N.dot(DOP);
         if (d < 0) {
           td.isDisplayed = true;
+          Vector L, N, V, R;
           
           if (this.isFlat) {
-            Vector L, N, V, R;
             L = (new Vector(v1, lightPos)).normalize();
             N = td.N.normalize();
             V = (new Vector(v1, COP)).normalize();
@@ -85,11 +85,11 @@ class TriangleStrip
   
   void draw() {
     Vertex v1, v2, v3;
-    Vector normal;
+    Vector L, N, V, R;
     Polygon pol;
         
     for ( int i = 2; i < verts.size(); i++ ) {      
-      if (triData.get(i-2).isDisplayed) {                 // (verts.size() - 2) == (triData.size());
+      if (triData.get(i-2).isDisplayed) {                 // (verts.size() - 2) == (triData.size());        
         v1 = perspective(verts.get(i-2), COP.x, COP.y, COP.z);
         v2 = perspective(verts.get(i-1), COP.x, COP.y, COP.z);
         v3 = perspective(verts.get(i)  , COP.x, COP.y, COP.z);
@@ -108,10 +108,35 @@ class TriangleStrip
         println(v3.toString());
         */
         
+        if (!isFlat) {
+          L = (new Vector(verts.get(i-2), lightPos)).normalize();
+          N = (new Vector(verts.get(i-2))).normalize();
+          V = (new Vector(verts.get(i-2), COP)).normalize();
+          R = (new Vector(N.mult(2 * L.dot(N)))).sub(L).normalize();
+          v1.fill = phongIllumination(objectCol, lightCol, ka, kd, ks, L, N, V, R, 5);
+          
+          L = (new Vector(verts.get(i-1), lightPos)).normalize();
+          N = (new Vector(verts.get(i-1))).normalize();
+          V = (new Vector(verts.get(i-1), COP)).normalize();
+          R = (new Vector(N.mult(2 * L.dot(N)))).sub(L).normalize();
+          v2.fill = phongIllumination(objectCol, lightCol, ka, kd, ks, L, N, V, R, 5);
+          
+          L = (new Vector(verts.get(i), lightPos)).normalize();
+          N = (new Vector(verts.get(i))).normalize();
+          V = (new Vector(verts.get(i), COP)).normalize();
+          R = (new Vector(N.mult(2 * L.dot(N)))).sub(L).normalize();
+          v3.fill = phongIllumination(objectCol, lightCol, ka, kd, ks, L, N, V, R, 5);
+        }
+        
         //pol = new Polygon(new Vertex(round(v1.x), round(v1.y), round(v1.z)), new Vertex(round(v2.x), round(v2.y), round(v2.z)), new Vertex(round(v3.x), round(v3.y), round(v3.z)));
         pol = new Polygon(v1, v2, v3);
-        //pol.draw(triData.get(i-2).fill);
-        pol.fill(triData.get(i-2).fill);
+        if (isFlat) {
+          pol.draw(triData.get(i-2).fill);
+          pol.fill(triData.get(i-2).fill);
+        } else {
+          pol.draw();
+          pol.fill();
+        }
       }
     }
   }

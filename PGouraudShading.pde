@@ -59,13 +59,14 @@ void setup() {
       R*cos(x_angle),
       R*sin(x_angle)*cos(y_angle));
   }
+  ts.isFlat = false;
   ts.draw();
   
   Polygon testPol = new Polygon();
+  /*
   testPol.addF(252.44272, 192.39812, 0.0);
   testPol.addF(296.34302, 192.39812, 0.0);
   testPol.addF(252.45624, 167.41292, 0.0);
-  /*
   testPol.addF(50, 130.3, 50);
   testPol.addF(90, 100.5, 50);
   testPol.addF(90, 70.2, 50);
