@@ -16,7 +16,8 @@ class TriangleData
 class TriangleStrip
 {
   ArrayList<Vertex> verts = new ArrayList<Vertex>();
-  ArrayList<TriangleData> triData = new ArrayList<TriangleData>(); 
+  ArrayList<TriangleData> triData = new ArrayList<TriangleData>();
+  boolean isFlat = true;
   
   TriangleStrip() {}
   
@@ -55,7 +56,15 @@ class TriangleStrip
         d = td.N.dot(DOP);
         if (d < 0) {
           td.isDisplayed = true;
-          td.fill = flatShading(lightCol, ka, kd, (new Vector(v1, lightPos)).normalize(), td.N.normalize());
+          
+          if (this.isFlat) {
+            Vector L, N, V, R;
+            L = (new Vector(v1, lightPos)).normalize();
+            N = td.N.normalize();
+            V = (new Vector(v1, COP)).normalize();
+            R = (new Vector(N.mult(2 * L.dot(N)))).sub(L).normalize();
+            td.fill = phongIllumination(objectCol, lightCol, ka, kd, ks, L, N, V, R, 5);
+          }
           
           /*
           if ( xi == 0 ) {
@@ -81,9 +90,9 @@ class TriangleStrip
         
     for ( int i = 2; i < verts.size(); i++ ) {      
       if (triData.get(i-2).isDisplayed) {                 // (verts.size() - 2) == (triData.size());
-        v1 = perspective(verts.get(i-2), 0, 0, 5);
-        v2 = perspective(verts.get(i-1), 0, 0, 5);
-        v3 = perspective(verts.get(i)  , 0, 0, 5);
+        v1 = perspective(verts.get(i-2), COP.x, COP.y, COP.z);
+        v2 = perspective(verts.get(i-1), COP.x, COP.y, COP.z);
+        v3 = perspective(verts.get(i)  , COP.x, COP.y, COP.z);
         
         // scale and translate the vertices for displaying purpose
         v1 = v1.scale(100, 100, 1)
@@ -99,8 +108,9 @@ class TriangleStrip
         println(v3.toString());
         */
         
+        //pol = new Polygon(new Vertex(round(v1.x), round(v1.y), round(v1.z)), new Vertex(round(v2.x), round(v2.y), round(v2.z)), new Vertex(round(v3.x), round(v3.y), round(v3.z)));
         pol = new Polygon(v1, v2, v3);
-        //pol.draw();
+        //pol.draw(triData.get(i-2).fill);
         pol.fill(triData.get(i-2).fill);
       }
     }

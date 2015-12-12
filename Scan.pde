@@ -69,9 +69,15 @@ class Polygon
 
   Polygon(Vertex v1, Vertex v2, Vertex v3) 
   {
+    /*
     addF(v1.x, v1.y, v1.z);
     addF(v2.x, v2.y, v2.z);
     addF(v3.x, v3.y, v3.z);
+    */
+    
+    addF(round(v1.x), round(v1.y), v1.z);
+    addF(round(v2.x), round(v2.y), v2.z);
+    addF(round(v3.x), round(v3.y), v3.z);
   }
   
   void addF(float x, float y, float z) {
@@ -403,21 +409,19 @@ class Polygon
       println("p2end fin  : " + p2end.toString());
       println();
       */
+       
+      ep1 = new Endpoint(p1start);
+      ep1.xInc = -((p1start.x-p1end.x) / (p1start.y-p1end.y));
+      ep1.yEnd = p1end.y;
+      ep1.xyEnd = p1end.x;
       
-      if (abs(p1start.y - p1end.y) > 1 && abs(p2start.y - p2end.y) > 1) {      
-        ep1 = new Endpoint(p1start);
-        ep1.xInc = -((p1start.x-p1end.x) / (p1start.y-p1end.y));
-        ep1.yEnd = p1end.y;
-        ep1.xyEnd = p1end.x;
-        
-        ep2 = new Endpoint(p2start);
-        ep2.xInc = -(p2start.x-p2end.x) / (p2start.y-p2end.y);
-        ep2.yEnd = p2end.y;
-        ep2.xyEnd = p2end.x;
-        
-        tmpT = new Trapezoid(ep1, ep2);
-        TrapezoidList.add(tmpT);
-      }
+      ep2 = new Endpoint(p2start);
+      ep2.xInc = -(p2start.x-p2end.x) / (p2start.y-p2end.y);
+      ep2.yEnd = p2end.y;
+      ep2.xyEnd = p2end.x;
+      
+      tmpT = new Trapezoid(ep1, ep2);
+      TrapezoidList.add(tmpT);
       
       cur = cur.next;
     } while (cur.next != teP.first);
@@ -425,7 +429,7 @@ class Polygon
     //println("TrapezoidList size: " + TrapezoidList.size());
   }
   
-  void fill(color col) { 
+  void fill(color col) {
     Trapezoid T;
     Endpoint ep1, ep2;
     int tmpi;
@@ -480,12 +484,12 @@ class Polygon
       }
       */
       
-      tmpf = -(ep1.y - floor(ep1.y)) * (ep1.x - ep1.xyEnd) / (ep1.y - ep1.yEnd);
-      pt1 = new Point(ep1.x+tmpf, floor(ep1.y), 0);
-      tmpf = -(ep2.y - floor(ep2.y)) * (ep2.x - ep2.xyEnd) / (ep2.y - ep2.yEnd);
-      pt2 = new Point(ep2.x+tmpf, floor(ep2.y), 0);
-      //pt1 = new Point(ep1.x, ep1.y, 0);
-      //pt2 = new Point(ep2.x, ep2.y, 0);
+      //tmpf = -(ep1.y - floor(ep1.y)) * (ep1.x - ep1.xyEnd) / (ep1.y - ep1.yEnd);
+      //pt1 = new Point(ep1.x+tmpf, floor(ep1.y), 0);
+      //tmpf = -(ep2.y - floor(ep2.y)) * (ep2.x - ep2.xyEnd) / (ep2.y - ep2.yEnd);
+      //pt2 = new Point(ep2.x+tmpf, floor(ep2.y), 0);
+      pt1 = new Point(ep1.x, ep1.y, 0);
+      pt2 = new Point(ep2.x, ep2.y, 0);
       
       //if (round(ep2.y) == round(ep2.yEnd))
       //  println("same");
@@ -498,7 +502,6 @@ class Polygon
         pt1 = new Point(pt1.x + ep1.xInc, pt1.y - 1, 0);
         pt2 = new Point(pt2.x + ep2.xInc, pt2.y - 1, 0);
       }
-      
       
       /*
       //-----------------------------------------------------------------------
@@ -536,11 +539,11 @@ class Polygon
     }
   }
   
-  void draw() {
+  void draw(color col) {
     Point cur = first;
     
-    strokeWeight(3);
-    stroke(0);
+    strokeWeight(2);
+    stroke(col);
     if (cur != null) {
       while (cur.next != first) {
         line(cur.x, cur.y, cur.next.x, cur.next.y);

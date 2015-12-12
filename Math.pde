@@ -67,6 +67,9 @@ class Vector
 {
   float x, y, z;
   
+  Vector(Vector v)
+  { x = v.x; y = v.y; z = v.z; }
+  
   Vector(Vertex v)
   { x = v.x; y = v.y; z = v.z; }
   
@@ -97,6 +100,10 @@ class Vector
   
   Vector sub(Vector v) {
     return new Vector(x - v.x, y - v.y, z - v.z);
+  }
+  
+  Vector mult(float n) {
+    return new Vector(n * x, n * y, n * z);
   }
   
   String toString() {
