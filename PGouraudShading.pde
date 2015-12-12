@@ -10,6 +10,7 @@ float R; // radius of 10
 Vector DOP = new Vector(0, 0, -1);
 Vertex lightPos = new Vertex(-10, -10, 10);
 color lightCol = #ff0000;
+color objectCol = #ff0000;
 float ka = 0.7,
       kd = 1.1;
 TriangleStrip ts;
@@ -20,8 +21,8 @@ void setup() {
   noFill();
   strokeWeight(0.005);
   
-  Band_Power = 5;  // 2^Band_Power = Total Points in a band.
-  Band_Points = 32; // 2^Band_Power
+  Band_Power = 6;  // 2^Band_Power = Total Points in a band.
+  Band_Points = 64; // 2^Band_Power
   Band_Mask = (Band_Points-2);
   Sections_In_Band = ((Band_Points/2)-1);
   Total_Points = (Sections_In_Band*Band_Points);

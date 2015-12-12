@@ -20,10 +20,22 @@ class Surface
     edges[1] = new Edge(vi2, vi3);
     edges[2] = new Edge(vi3, vi1);
     
+    /*
+    strokeWeight(10);
+    stroke(vi1.rgb);
+    point(vi1.x, vi1.y);
+    stroke(vi2.rgb);
+    point(vi2.x, vi2.y);
+    stroke(vi3.rgb);
+    point(vi3.x, vi3.y);
+    */
+    
     setBuckets(); // see below
   }
   
   void setBuckets() {
+    float r, g, b;
+    
     // clear buckets
     buckets = new BuckSET[yMax - yMin + 1];
     for (int i = 0; i < (yMax - yMin + 1); i++)
@@ -36,6 +48,17 @@ class Surface
                 edges[i].xyMin,
                 edges[i].vi2.x - edges[i].vi1.x,
                 edges[i].vi2.y - edges[i].vi1.y);
+                
+      e.yMin = edges[i].yMin;
+      if (edges[i].vi1.y >= edges[i].vi2.y) {
+        e.rgb1 = edges[i].vi1.rgb;
+        e.rgb2 = edges[i].vi2.rgb;
+      } else {
+        e.rgb1 = edges[i].vi2.rgb;
+        e.rgb2 = edges[i].vi1.rgb;
+      }
+      
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////set rinc, ginc, binc
                 
       if (e.dy > 0)
         buckets[edges[i].yMin - yMin].insertF(e);
@@ -72,19 +95,44 @@ class Surface
   void fill() {
     setBuckets();
     ael = new AEL();
+    ElemSET cur;
+    color col1, col2;
     
+    /*
     // draw outline
     stroke(fill);
     strokeWeight(2);
     line(vi1.x, vi1.y, vi2.x, vi2.y);
     line(vi2.x, vi2.y, vi3.x, vi3.y);
     line(vi3.x, vi3.y, vi1.x, vi1.y);
+    */
     
     for (int i = yMin; i <= yMax; i++) {
       ael.y = i;
+      cur = buckets[i - yMin].first;
       
-      if (buckets[i - yMin].first != null) {        
-        ael.insertL(buckets[i - yMin].first, buckets[i - yMin].size);
+      if (cur != null) {
+        // (Ys - Y2) / (Y1 - Y2) * I1 + (Y1 - Ys) / (Y1 - Y2) * I2
+        cur.r = round((i - cur.yMin) / (cur.yMax - cur.yMin) * red(cur.rgb1) + (cur.yMax - i) / (cur.yMax - cur.yMin) * red(cur.rgb2));
+        cur.g = round((i - cur.yMin) / (cur.yMax - cur.yMin) * green(cur.rgb1) + (cur.yMax - i) / (cur.yMax - cur.yMin) * green(cur.rgb2));
+        cur.b = round((i - cur.yMin) / (cur.yMax - cur.yMin) * blue(cur.rgb1) + (cur.yMax - i) / (cur.yMax - cur.yMin) * blue(cur.rgb2));
+        
+        /*
+        cur.r = round(red(cur.rgb1) - (red(cur.rgb1) - red(cur.rgb2)) * (cur.yMax - i) / cur.yMax - cur.yMin);
+        cur.g = round(green(cur.rgb1) - (green(cur.rgb1) - green(cur.rgb2)) * (cur.yMax - i) / cur.yMax - cur.yMin);
+        cur.b = round(blue(cur.rgb1) - (blue(cur.rgb1) - blue(cur.rgb2)) * (cur.yMax - i) / cur.yMax - cur.yMin);
+        */
+        
+        stroke(cur.r, cur.g, cur.b);
+        strokeWeight(3);
+        //point(cur.xyMin, i);
+        println(i);
+        
+        //println(cur.yMin);
+        
+        ael.insertL(cur, buckets[i - yMin].size);
+        //println(buckets[i - yMin].size);
+        
         deleteReplaced();
         sortAEL();
       }
@@ -92,9 +140,10 @@ class Surface
       deleteOverY();
       stroke(fill);
       strokeWeight(1);
-      ael.fill();
+      ael.fillIt();
       ael.process();
     }
+    println();
     
     ael.first = null;
   }

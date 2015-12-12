@@ -63,32 +63,50 @@ class TriangleStrip
   }
   
   void draw() {
-    Vertex v1, v2, v3;
+    Vertex v1, v2, v3, v1o, v2o, v3o;
     VertexInt vi1, vi2, vi3;
     Vector normal;
     Surface sf;
         
     for ( int i = 2; i < verts.size(); i++ ) {      
       if (triData.get(i-2).isDisplayed) {                 // (verts.size() - 2) == (triData.size());
-        v1 = perspective(verts.get(i-2), 0, 0, 5);
-        v2 = perspective(verts.get(i-1), 0, 0, 5);
-        v3 = perspective(verts.get(i)  , 0, 0, 5);
+        v1o = perspective(verts.get(i-2), 0, 0, 5);
+        v2o = perspective(verts.get(i-1), 0, 0, 5);
+        v3o = perspective(verts.get(i)  , 0, 0, 5);
         
         // scale and translate the vertices for displaying purpose
-        v1 = v1.scale(100, 100, 1)
+        v1 = v1o.scale(100, 100, 1)
                .translate(width/2, height/2, 0);
-        v2 = v2.scale(100, 100, 1)
+        v2 = v2o.scale(100, 100, 1)
                .translate(width/2, height/2, 0);
-        v3 = v3.scale(100, 100, 1)
+        v3 = v3o.scale(100, 100, 1)
                .translate(width/2, height/2, 0);
         
         vi1 = new VertexInt(round(v1.x), round(v1.y));
         vi2 = new VertexInt(round(v2.x), round(v2.y));
         vi3 = new VertexInt(round(v3.x), round(v3.y));
+        normal = (new Vector(v1o)).normalize();
+        vi1.rgb = flatShading(objectCol, ka, kd, (new Vector(v1o, lightPos)).normalize(), normal);
+        
+        normal = (new Vector(v2o)).normalize();
+        vi2.rgb = flatShading(objectCol, ka, kd, (new Vector(v2o, lightPos)).normalize(), normal);
+        
+        normal = (new Vector(v3o)).normalize();
+        vi3.rgb = flatShading(objectCol, ka, kd, (new Vector(v3o, lightPos)).normalize(), normal);
         
         sf = new Surface(vi1, vi2, vi3);
         sf.fill = triData.get(i-2).fill;
         sf.fill();
+        
+        /*
+        strokeWeight(10);
+        stroke(vi1.rgb);
+        point(vi1.x, vi1.y);
+        stroke(vi2.rgb);
+        point(vi2.x, vi2.y);
+        stroke(vi3.rgb);
+        point(vi3.x, vi3.y);
+        */
         
         /*
         if (red(sf.fill) <= 0)

@@ -66,6 +66,7 @@ class Vertex
 class VertexInt
 {
   int x, y;
+  color rgb;
   
   VertexInt() 
   { x = y = 0; }
