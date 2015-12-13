@@ -56,15 +56,6 @@ class TriangleStrip
         d = td.N.dot(DOP);
         if (d < 0) {
           td.isDisplayed = true;
-          Vector L, N, V, R;
-          
-          if (this.isFlat) {
-            L = (new Vector(v1, lightPos)).normalize();
-            N = td.N.normalize();
-            V = (new Vector(v1, COP)).normalize();
-            R = (new Vector(N.mult(2 * L.dot(N)))).sub(L).normalize();
-            td.fill = phongIllumination(objectCol, lightCol, ka, kd, ks, L, N, V, R, 5);
-          }
           
           /*
           if ( xi == 0 ) {
@@ -85,7 +76,7 @@ class TriangleStrip
   
   void draw() {
     Vertex v1, v2, v3;
-    Vector L, N, V, R;
+    Vector N;
     Polygon pol;
         
     for ( int i = 2; i < verts.size(); i++ ) {      
@@ -96,11 +87,11 @@ class TriangleStrip
         
         // scale and translate the vertices for displaying purpose
         v1 = v1.scale(100, 100, 1)
-               .translate(width/2, height/2, 0);
+               .translate((width-optWidth)/2, height/2, 0);
         v2 = v2.scale(100, 100, 1)
-               .translate(width/2, height/2, 0);
+               .translate((width-optWidth)/2, height/2, 0);
         v3 = v3.scale(100, 100, 1)
-               .translate(width/2, height/2, 0);
+               .translate((width-optWidth)/2, height/2, 0);
         
         /*
         println(v1.toString());
@@ -109,23 +100,16 @@ class TriangleStrip
         */
         
         if (!isFlat) {
-          L = (new Vector(verts.get(i-2), lightPos)).normalize();
           N = (new Vector(verts.get(i-2))).normalize();
-          V = (new Vector(verts.get(i-2), COP)).normalize();
-          R = (new Vector(N.mult(2 * L.dot(N)))).sub(L).normalize();
-          v1.fill = phongIllumination(objectCol, lightCol, ka, kd, ks, L, N, V, R, 5);
+          v1.fill = phongIllumination(lights, verts.get(i-2), COP, N);
           
-          L = (new Vector(verts.get(i-1), lightPos)).normalize();
           N = (new Vector(verts.get(i-1))).normalize();
-          V = (new Vector(verts.get(i-1), COP)).normalize();
-          R = (new Vector(N.mult(2 * L.dot(N)))).sub(L).normalize();
-          v2.fill = phongIllumination(objectCol, lightCol, ka, kd, ks, L, N, V, R, 5);
+          v2.fill = phongIllumination(lights, verts.get(i-1), COP, N);
           
-          L = (new Vector(verts.get(i), lightPos)).normalize();
           N = (new Vector(verts.get(i))).normalize();
-          V = (new Vector(verts.get(i), COP)).normalize();
-          R = (new Vector(N.mult(2 * L.dot(N)))).sub(L).normalize();
-          v3.fill = phongIllumination(objectCol, lightCol, ka, kd, ks, L, N, V, R, 5);
+          v3.fill = phongIllumination(lights, verts.get(i), COP, N);
+        } else {
+          triData.get(i-2).fill = phongIllumination(lights, verts.get(i-2), COP, triData.get(i-2).N.normalize());
         }
         
         //pol = new Polygon(new Vertex(round(v1.x), round(v1.y), round(v1.z)), new Vertex(round(v2.x), round(v2.y), round(v2.z)), new Vertex(round(v3.x), round(v3.y), round(v3.z)));
@@ -166,6 +150,17 @@ class TriangleStrip
   void rotZ(float deg) {
     for (int i = 0; i < verts.size(); i++) {
       verts.set(i, verts.get(i).rotZ(deg));
+      
+      if (i >= 2)
+        setTriangleData(i);
+    }
+    
+    draw();
+  }
+  
+  void trans(float dx, float dy, float dz) {
+    for (int i = 0; i < verts.size(); i++) {
+      verts.set(i, verts.get(i).translate(dx, dy, dz));
       
       if (i >= 2)
         setTriangleData(i);

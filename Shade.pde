@@ -3,6 +3,21 @@
 // color diffuse()
 // color specular()
 
+class LightSources
+{
+  ArrayList<Vertex> positions = new ArrayList<Vertex>();
+  float ka, kd, ks;
+  color lightColor, objectColor;
+  int specularExp;
+  
+  LightSources(Vertex lpos, color ocol, color lcol, float a, float d, float s, int se) 
+  { positions.add(lpos); objectColor = ocol; lightColor = lcol; ka = a; kd = d; ks = s; specularExp = se;  }
+  
+  void addLightSource(Vertex lpos) {
+    positions.add(lpos);
+  }
+}
+
 /**
  * ka is the ambient coefficient
  * kd is the diffuse coefficient
@@ -14,13 +29,52 @@
  * n is specular reflection exponent
  */
 color phongIllumination(color fill, color light, float ka, float kd, float ks, Vector L, Vector N, Vector V, Vector R, int n) {
-  color ambientRGB = ambient(fill, ka);
-  color diffuseRGB = diffuse(fill, kd, L, N);
-  color specularRGB = specular(light, ks, V, R, n);
+  color ambientRGB = ambient(fill, ka), 
+        diffuseRGB, 
+        specularRGB;
   
-  float colR = red(ambientRGB) + red(diffuseRGB) + red(specularRGB);
-  float colG = green(ambientRGB) + green(diffuseRGB) + green(specularRGB);
-  float colB = blue(ambientRGB) + blue(diffuseRGB) + blue(specularRGB);
+  float colR = red(ambientRGB);
+  float colG = green(ambientRGB);
+  float colB = blue(ambientRGB);
+  
+  if (kd > 0) {
+    diffuseRGB = diffuse(fill, kd, L, N);
+    specularRGB = specular(light, ks, V, R, n);
+    
+    colR += red(diffuseRGB)   + red(specularRGB);
+    colG += green(diffuseRGB) + green(specularRGB);
+    colB += blue(diffuseRGB)  + blue(specularRGB);
+  }
+  
+  return color(colR, colG, colB);
+}
+
+// N is unit vector
+color phongIllumination(LightSources ls, Vertex pt, Vertex viewer, Vector N) {
+  color ambientRGB, diffuseRGB, specularRGB;
+  float colR, colG, colB;
+  Vector L, V, R;
+  
+  ambientRGB = ambient(ls.objectColor, ls.ka);
+  
+  colR = red(ambientRGB);
+  colG = green(ambientRGB);
+  colB = blue(ambientRGB);
+  
+  if (ls.kd > 0) {
+    V = (new Vector(pt, viewer)).normalize();
+    for (int i = 0; i < ls.positions.size(); i++) {
+      L = (new Vector(pt, ls.positions.get(i))).normalize();
+      R = (new Vector(N.mult(2 * L.dot(N)))).sub(L).normalize();
+      
+      diffuseRGB = diffuse(ls.objectColor, ls.kd, L, N);
+      specularRGB = specular(ls.lightColor, ls.ks, V, R, ls.specularExp);
+      
+      colR += red(diffuseRGB)   + red(specularRGB);
+      colG += green(diffuseRGB) + green(specularRGB);
+      colB += blue(diffuseRGB)  + blue(specularRGB);
+    }
+  }
   
   return color(colR, colG, colB);
 }

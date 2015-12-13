@@ -561,7 +561,6 @@ class Polygon
         float i = ep2.y;
         while (i >= ep2.yEnd) {
           line(pt1.x, pt1.y, pt2.x, pt2.y);
-          println(pt1.x + " " + pt2.x);
           
           pt1 = new Point(pt1.x + ep1.xInc, pt1.y - 1, 0);
           pt2 = new Point(pt2.x + ep2.xInc, pt2.y - 1, 0);
@@ -641,6 +640,7 @@ class Polygon
       }
       */
     }
+    noStroke();
   }
   
   void draw() {
@@ -702,6 +702,7 @@ class Polygon
         } // end for i = ...
       } // end for ti = 0
     } // end if isFlat
+    noStroke();
   }
   
   String toString() {
