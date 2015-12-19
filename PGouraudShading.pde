@@ -13,7 +13,7 @@ float transX = 0,
       transZ = 0;
 
 void setup() {
-  frame.setTitle("Gouraud Shading");
+  frame.setTitle("PGouraudShading : Gouraud Shading Implementation");
   
   size(600, 380, OPENGL);
   background(#3D4C53);
