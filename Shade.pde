@@ -1,7 +1,10 @@
+// class LightSources
 // color phongIllumination()
 // color ambient()
 // color diffuse()
 // color specular()
+// color interpolateIalongY()
+// color interpolateIalongX()
 
 class LightSources
 {

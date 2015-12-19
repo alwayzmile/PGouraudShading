@@ -1,3 +1,5 @@
+// Vertex perspective()
+
 // COP (xc, yc, zc)
 Vertex perspective(Vertex v, float xc, float yc, float zc) {
   float w = (-v.z / zc) + 1;

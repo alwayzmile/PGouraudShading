@@ -1,3 +1,22 @@
+// void change_x_light()
+// void change_y_light()
+// void change_z_light()
+// void change_x_light2()
+// void change_y_light2()
+// void change_z_light2()
+// void activate_second_light()
+// void change_ka()
+// void change_kd()
+// void change_ks()
+// void change_spec_exp()
+// void transx_sphere()
+// void transy_sphere()
+// void transz_sphere()
+// void use_flat_shading()
+// void keyPressed()
+// void keyReleased()
+// void mouseClicked()
+
 void change_x_light(float x) {
   lights.positions.get(0).x = x;
   

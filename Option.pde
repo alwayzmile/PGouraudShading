@@ -1,3 +1,8 @@
+// void optionPanel()
+// void makeEditable()
+// class NumberboxInput
+// void resetOption()
+
 void optionPanel() {
   ControlP5 cp5 = new ControlP5(this);
   Numberbox n;

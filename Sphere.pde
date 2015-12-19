@@ -1,3 +1,5 @@
+// TriangleStrip sphere()
+
 // bandPoints = 2 ^ bandPower
 // R is the radius of the sphere
 TriangleStrip sphere(int bandPower, int bandPoints, int R) {
