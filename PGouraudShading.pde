@@ -28,7 +28,6 @@ void setup() {
                             0.7, 0.9, 0.8, 5);               // coefAmbient, coefDiffuse, coefSpecular, specularExponent
   
   ts = sphere(5, 32, 1);
-  ts.isFlat = false;
   ts.draw();
   optionPanel();
 }

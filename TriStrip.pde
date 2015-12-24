@@ -17,7 +17,7 @@ class TriangleStrip
 {
   ArrayList<Vertex> verts = new ArrayList<Vertex>();
   ArrayList<TriangleData> triData = new ArrayList<TriangleData>();
-  boolean isFlat = true;
+  boolean isFlat = false;
   
   TriangleStrip() {}
   
@@ -75,10 +75,13 @@ class TriangleStrip
   }
   
   void draw() {
-    Vertex v1, v2, v3;
+    Vertex v1, v2, v3, centerSphere;
     Vector N;
     Polygon pol;
-        
+    
+    centerSphere = new Vertex(transX, transY, transZ);
+    //println(centerSphere.toString());
+    
     for ( int i = 2; i < verts.size(); i++ ) {      
       if (triData.get(i-2).isDisplayed) {                 // (verts.size() - 2) == (triData.size());        
         v1 = perspective(verts.get(i-2), COP.x, COP.y, COP.z);
@@ -100,13 +103,13 @@ class TriangleStrip
         */
         
         if (!isFlat) {
-          N = (new Vector(verts.get(i-2))).normalize();
+          N = (new Vector(centerSphere, verts.get(i-2))).normalize();
           v1.fill = phongIllumination(lights, verts.get(i-2), COP, N);
           
-          N = (new Vector(verts.get(i-1))).normalize();
+          N = (new Vector(centerSphere, verts.get(i-1))).normalize();
           v2.fill = phongIllumination(lights, verts.get(i-1), COP, N);
           
-          N = (new Vector(verts.get(i))).normalize();
+          N = (new Vector(centerSphere, verts.get(i))).normalize();
           v3.fill = phongIllumination(lights, verts.get(i), COP, N);
         } else {
           triData.get(i-2).fill = phongIllumination(lights, verts.get(i-2), COP, triData.get(i-2).N.normalize());
